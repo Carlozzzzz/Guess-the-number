@@ -23,6 +23,9 @@
 // Event
 // what will happen, event handler
 
+// refactoring
+// adjust the redundant code into function (selecting and assigning value to the div childs elements)
+
 let score = 20;
 let highscore = 0;
 let randomNumbers = [];
@@ -75,20 +78,33 @@ const isInputMatch = function (inputs, secretNums) {
   return true;
 };
 
+const processSecretNumberOutput = function (
+  obj,
+  randomNumberArr,
+  secretNumberArrOutput
+) {
+  for (let i = 0; i < secretNumberArrOutput.length; i++) {
+    const secretNumber = secretNumberArrOutput[i];
+    if (obj.classList.contains('again')) {
+      randomNumberArr[i] = generateRandomNumber();
+      secretNumber.style.width = '15rem';
+      secretNumber.textContent = '?';
+    } else if (obj.classList.contains('check')) {
+      secretNumber.textContent = randomNumbers[i];
+      secretNumber.style.width = '30rem';
+    }
+  }
+};
+
 // resetting the game
 document.querySelector('.again').addEventListener('click', function () {
   score = 20;
 
   document.querySelector('body').style.backgroundColor = '#222';
 
-  for (let i = 0; i < secretNumbers.length; i++) {
-    const secretNumber = secretNumbers[i];
-    randomNumbers[i] = generateRandomNumber();
-    secretNumber.style.width = '15rem';
-    secretNumber.textContent = '?';
-  }
+  // refactored
+  processSecretNumberOutput(this, randomNumbers, secretNumbers);
 
-  // document.querySelector('.guess').value = null;
   for (let i = 0; i < guessInputs.length; i++) {
     const secretNumber = guessInputs[i];
     secretNumber.value = '';
@@ -96,7 +112,6 @@ document.querySelector('.again').addEventListener('click', function () {
 
   document.querySelector('.score').textContent = score;
 
-  //   document.querySelector('.message').textContent = 'Start guessing...';
   displayMessage('Start guessing...');
 });
 
@@ -112,14 +127,8 @@ document.querySelector('.check').addEventListener('click', function () {
   } else if (isMatch) {
     displayMessage('Corrent Number!');
 
-    // document.querySelector('.number').textContent = secretNumber;
-    // document.querySelector('.number').style.width = '30rem';
-
-    for (let i = 0; i < secretNumbers.length; i++) {
-      const secretNumber = secretNumbers[i];
-      secretNumber.textContent = randomNumbers[i];
-      secretNumber.style.width = '30rem';
-    }
+    // refactored
+    processSecretNumberOutput(this, randomNumbers, secretNumbers);
 
     document.querySelector('body').style.backgroundColor = '#60b347';
 
@@ -141,14 +150,8 @@ document.querySelector('.check').addEventListener('click', function () {
 });
 
 function run() {
-  const randomNumbersArr = setRandomNumbers(3);
-
-  for (let i = 0; i < randomNumbersArr.length; i++) {
-    randomNumbersArr[i] = generateRandomNumber();
-    randomNumbers.push(randomNumbersArr[i]);
-  }
-
-  console.log(randomNumbersArr);
+  randomNumbers = setRandomNumbers(3);
+  console.log(randomNumbers);
 }
 
 // run the game
